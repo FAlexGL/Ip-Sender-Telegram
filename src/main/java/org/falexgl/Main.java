@@ -1,14 +1,13 @@
 package org.falexgl;
 
-import org.falexgl.bot.FetchIPBot;
-import org.falexgl.helpers.menu.MainMenu;
-import org.falexgl.models.Credentials;
-import org.falexgl.helpers.ip.IPHandler;
-import org.falexgl.helpers.settings.SettingFileHelper;
+import org.falexgl.cli.menu.MainMenu;
+import org.falexgl.utils.log.AppLogger;
+import org.falexgl.utils.settings.SettingFileHelper;
 
 public class Main {
 
     public static void main(String[] args) {
+        AppLogger.info("App initiated");
         SettingFileHelper.checkOrCreateSettingFile();
         MainMenu menu = new MainMenu();
         menu.initMenu();

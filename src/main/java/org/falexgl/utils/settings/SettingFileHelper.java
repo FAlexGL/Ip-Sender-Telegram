@@ -1,17 +1,15 @@
-package org.falexgl.helpers.settings;
+package org.falexgl.utils.settings;
 
-import org.falexgl.helpers.date.DateFormatted;
 import org.falexgl.models.Credentials;
-
+import org.falexgl.utils.log.AppLogger;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Scanner;
+import java.util.logging.Level;
 
 public class SettingFileHelper {
 
@@ -22,6 +20,7 @@ public class SettingFileHelper {
 
     public static void checkOrCreateSettingFile() {
         if (!Files.exists(route)) {
+            AppLogger.error(Level.WARNING, "No config file found.", null);
             createFile();
             checkFile();
         } else {
@@ -36,8 +35,7 @@ public class SettingFileHelper {
             token = br.readLine().substring(firstLine.length());
             chatId = br.readLine().substring(secondLine.length());
         } catch (IOException e) {
-            String date = LocalTime.now().format(DateTimeFormatter.ofPattern("HH:mm:ss"));
-            System.out.println("(" + date + ") Reading file error: " + e.getMessage());
+            AppLogger.error(Level.SEVERE, "Error getting credentials", e);
             closeApp();
         }
         return new Credentials(token, chatId);
@@ -56,9 +54,11 @@ public class SettingFileHelper {
             writer.newLine();
             writer.write(secondLine + chatId);
         } catch (IOException e) {
-            System.out.println(DateFormatted.getFormattedDate() + " Error creating file: " + e.getMessage());
+            System.out.println("Error creating file: " + e.getMessage());
+            AppLogger.error(Level.SEVERE, "Error creating file", e);
             closeApp();
         }
+        AppLogger.info("Setting file created.");
         System.out.println("Setting file created.");
     }
 
@@ -71,11 +71,13 @@ public class SettingFileHelper {
                     secondLineFromFile == null ||
                     !firstLineFromFile.startsWith(firstLine) ||
                     !secondLineFromFile.startsWith(secondLine)) {
-                System.out.println(DateFormatted.getFormattedDate() + " The file has an invalid format, please delete it and run the app again to create it.");
+                System.out.println("The file has an invalid format, please delete it and run the app again to create it.");
+                AppLogger.error(Level.SEVERE, "The file has an invalid format, please delete it and run the app again to create it.", null);
                 closeApp();
             }
         } catch (IOException e) {
-            System.out.println(DateFormatted.getFormattedDate() + " Reading file error: " + e.getMessage());
+            System.out.println("Reading file error: " + e.getMessage());
+            AppLogger.error(Level.SEVERE, "Reading file error.", e);
             closeApp();
         }
     }
@@ -84,6 +86,7 @@ public class SettingFileHelper {
         Scanner sc = new Scanner(System.in);
         System.out.println("Press any key to close the app...");
         sc.nextLine();
+        AppLogger.info("App Closed.");
         System.exit(1);
     }
 }

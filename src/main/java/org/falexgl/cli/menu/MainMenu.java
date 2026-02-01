@@ -1,7 +1,10 @@
-package org.falexgl.helpers.menu;
+package org.falexgl.cli.menu;
 
 import org.falexgl.bot.FetchIPBot;
+import org.falexgl.utils.log.AppLogger;
+
 import java.util.Scanner;
+import java.util.logging.Level;
 
 public class MainMenu {
 
@@ -36,6 +39,7 @@ public class MainMenu {
 
     private void invalidOption() {
         System.out.println("Invalid option, please select a valid option.");
+        AppLogger.error(Level.WARNING, "invalid option selected in main menu", null);
         initMenu();
     }
 
@@ -60,18 +64,16 @@ public class MainMenu {
                 period = Integer.parseInt(sc.nextLine());
             } catch (NumberFormatException e) {
                 System.out.println("Invalid input. Please enter a positive number.");
+                AppLogger.error(Level.WARNING, "invalid bot period entered", null);
             }
         }
         fetchIPBot.initFetchIpBot(period);
-        System.out.println("Bot running...");
-        System.out.println();
         initMenu();
-
     }
 
     private void stopBot() {
         fetchIPBot.stopBot();
-        System.out.println("Bot stopped, please, press ENTER to continue...");
+        System.out.println("Press ENTER to continue...");
         sc.nextLine();
         initMenu();
     }

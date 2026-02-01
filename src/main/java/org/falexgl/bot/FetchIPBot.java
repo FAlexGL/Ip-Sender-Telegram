@@ -1,19 +1,20 @@
 package org.falexgl.bot;
 
-import org.falexgl.helpers.date.DateFormatted;
 import org.falexgl.helpers.ip.IPHandler;
-import org.falexgl.helpers.settings.SettingFileHelper;
+import org.falexgl.utils.log.AppLogger;
+import org.falexgl.utils.settings.SettingFileHelper;
 import org.falexgl.models.Credentials;
 import org.falexgl.telegram.TelegramBridge;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.logging.Level;
 
 public class FetchIPBot {
 
     private static FetchIPBot instance;
     private ScheduledExecutorService scheduler;
-    private IPHandler ipHandler = new IPHandler();
+    private final IPHandler ipHandler = new IPHandler();
 
     public static FetchIPBot getInstance() {
         if (instance == null) {
@@ -26,18 +27,23 @@ public class FetchIPBot {
         scheduler = Executors.newScheduledThreadPool(1);
         Runnable task = () -> {
             if (ipHandler.isNewIp()) {
-                System.out.println(DateFormatted.getFormattedDate() + " New IP obtained: " + ipHandler.storedIp);
+                AppLogger.info("New IP obtained: " + ipHandler.storedIp);
                 sendMessage(ipHandler);
             } else {
-                System.out.println(DateFormatted.getFormattedDate() + " No new IP found.");
+                AppLogger.info("No new IP found.");
             }
         };
         scheduler.scheduleAtFixedRate(task, 0, period, TimeUnit.MINUTES);
+        AppLogger.info("Running bot every " + period + " minutes.");
+        System.out.println("Bot running...");
+        System.out.println();
     }
 
     public void stopBot() {
         if (scheduler != null) {
             scheduler.shutdown();
+            AppLogger.info("Bot stopped.");
+            System.out.println("Bot stopped.");
         }
     }
 
@@ -50,8 +56,9 @@ public class FetchIPBot {
         TelegramBridge bot = new TelegramBridge();
         try {
             bot.sendMessage(ipHandler.storedIp, credentials.token, credentials.chatID);
+            AppLogger.info("New IP sent to Telegram: " + ipHandler.storedIp);
         } catch (Exception e) {
-            System.out.println(DateFormatted.getFormattedDate() + " Error sending Telegram message: " + e.getMessage());
+            AppLogger.error(Level.SEVERE, "Error sending Telegram Message with new IP", e);
         }
     }
 }

@@ -41,3 +41,6 @@ bin/
 
 ### Mac OS ###
 .DS_Store
+setting.txt
+
+app_0.log
