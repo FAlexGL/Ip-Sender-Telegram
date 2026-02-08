@@ -8,8 +8,16 @@ import java.util.logging.Level;
 
 public class MainMenu {
 
+    private static MainMenu instance;
     private final FetchIPBot fetchIPBot = FetchIPBot.getInstance();
     private final Scanner sc = new Scanner(System.in);
+
+    public static MainMenu getInstance() {
+        if (instance == null) {
+            instance = new MainMenu();
+        }
+        return instance;
+    }
 
     public void initMenu() {
         Boolean isBotUp = fetchIPBot.isBotUp();
@@ -84,6 +92,6 @@ public class MainMenu {
     }
 
     private void showLogs() {
-        initMenu();
+        AppLogger.showLogs();
     }
 }

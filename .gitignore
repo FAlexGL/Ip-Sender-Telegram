@@ -44,3 +44,5 @@ bin/
 setting.txt
 
 app_0.log
+
+*.lck

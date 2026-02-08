@@ -9,7 +9,7 @@ public class Main {
     public static void main(String[] args) {
         AppLogger.info("App initiated");
         SettingFileHelper.checkOrCreateSettingFile();
-        MainMenu menu = new MainMenu();
+        MainMenu menu = MainMenu.getInstance();
         menu.initMenu();
     }
 }
